@@ -1,0 +1,17 @@
+#!/bin/bash
+clear
+bash ~/.foxy/bin/foxy.sh
+sleep 1
+echo -e "🦊 Foxy-Logs: Quick Access to System Logs"
+echo "-----------------------------------------"
+echo "1. System Logs (auth.log)"
+echo "2. Last 20 lines of syslog"
+echo "3. Back"
+echo "-----------------------------------------"
+read -p "Select [1-3]: " choice
+
+case $choice in
+1) sudo tail -n 20 /var/log/auth.log ; read -p "Press Enter..." ;;
+2) sudo tail -n 20 /var/log/syslog ; read -p "Press Enter..." ;;
+3) exit ;;
+esac

@@ -1,0 +1,22 @@
+#!/bin/bash
+clear
+bash ~/.foxy/bin/foxy.sh
+sleep 1
+echo "🦊 Foxy-Check: System Health Diagnostic"
+echo "---------------------------------------"
+
+if ping -c 1 google.com &> /dev/null; then
+echo -e "Internet: \033[0;32mCONNECTED\033[0m"
+else
+echo -e "Internet: \033[0;31mOFFLINE\033[0m"
+fi
+
+space=$(df / | grep / | awk '{ print $5 }' | sed 's/%//')
+if [ "$space" -gt 90 ]; then
+echo -e "Disk Usage: \033[0;31mCRITICAL ($space%)\033[0m"
+else
+echo -e "Disk Usage: \033[0;32mOK ($space%)\033[0m"
+fi
+
+echo -e "---------------------------------------"
+read -p "Press Enter to return..."
