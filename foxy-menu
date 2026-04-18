@@ -1,0 +1,119 @@
+#!/bin/bash
+
+select_and_run() {
+local dir="$1"
+clear
+echo "--- Catalog: $(basename "$dir") ---"
+local scripts=("$dir"/*)
+local options=("${scripts[@]##*/}" "Back")
+
+select opt in "${options[@]}"; do
+if [[ "$opt" == "Back" ]]; then
+return
+elif [[ -n "$opt" ]]; then
+clear
+echo "Launch: $opt..."
+bash "$dir/$opt"
+read -p "Press Enter to return..."
+return
+else
+echo "Wrong choice"
+fi
+done
+} 
+
+submenu_core() {
+clear
+bash ~/.foxy/bin/foxy.sh
+sleep1
+
+echo "--- SYSTEM CORE MENU ---"
+echo "1. Pulse"
+echo "2. Check"
+echo "3. Logs"
+echo "4.Back to Main Menu"
+read -p "Select [1-4]: " subchoice
+case $subchoice in
+1) ~/.foxy/bin/foxy-pulse ; read -p "Press Enter to continue..." ;;
+2) ~/.foxy/bin/foxy-check ; read -p "Press Enter to continue..." ;;
+3) ~/.foxy/bin/foxy-logs ;;
+4) return ;;
+*) echo "invalid option" ; sleep 1 ;;
+esac
+}
+
+submenu_guard() {
+while true; do
+clear
+bash ~/.foxy/bin/foxy.sh
+sleep 1
+
+echo "--- Control Center ---"
+echo "1. Guard System (foxy-admin)"
+echo "2. Instrumentals (/tools)"
+echo "3. Back to Main Menu"
+read -p "Select [1-3]: " sub_choice
+
+case $sub_choice in
+1)
+    echo -e "\n\e[32m[!] Entrance to Security Core...\e[0m"
+    cd ~/foxy-admin/security/ || return
+    bash ./guard.sh
+    read -p "Press Enter to continue..."
+    ;;
+2)
+    echo -e "\n\e[36m[!] Launch folder Tools...\e[0m"
+    cd ~/.foxy/bin/tools/ || return
+    ls -F
+    read -p "Press Enter..."
+    ;;
+3)
+    return
+    ;;
+*)
+    echo "Wrong choice"
+    sleep 1
+    ;;
+esac
+done
+}
+
+submenu_scripts() {
+clear
+bash ~/.foxy/bin/foxy.sh
+sleep 1
+
+echo "--- SCRIPTS LIBRARY (Sandbox) ---"
+local scripts=("$HOME/scripts/"*)
+select script in "${scripts[@]##*/}" "Back"; do
+if [[ "$script" == "Back" ]]; then
+break
+elif [[ -f "$HOME/scripts/$script" ]]; then
+clear
+bash "$HOME/scripts/$script"
+read -p "Press Enter to return..."
+break
+else
+echo "Error: Script not finding."
+fi
+done
+}
+
+while true; do
+clear
+bash ~/.foxy/bin/foxy.sh
+sleep 1
+
+echo "=== FOXY OS MASTER MENU ==="
+echo "1. System Core [3 Scripts]"
+echo "2. Control Center"
+echo "3. Scripts Library"
+echo "4. Exit"
+read -p "Select [1-4]: " choice
+case $choice in
+1) submenu_core ;;
+2) submenu_guard ;;
+3) submenu_scripts ;;
+4) exit 0 ;;
+esac
+done
